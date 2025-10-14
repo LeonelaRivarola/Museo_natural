@@ -1,0 +1,21 @@
+Basado en lo que dice el documento:
+
+📸 Ver imágenes del museo (galería, detalle de obra, etc.)
+
+💬 Comentar obras (con aprobación del admin)
+
+🔔 Recibir notificaciones de eventos
+
+💰 Algún tipo de monetización (ejemplo: donar al museo o comprar entradas)
+
+🔐 Identificación (contraseña, patrón o huella)
+
+🌓 Modo claro / oscuro
+
+🧩 Usar Atomic Design en una parte
+
+📍 GPS para detectar ingreso al museo
+
+📷 Lector QR para ver detalles de obras
+
+🗃️ Almacenamiento local (por ejemplo con AsyncStorage o SQLite)
