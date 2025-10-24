@@ -19,3 +19,14 @@ Basado en lo que dice el documento:
 📷 Lector QR para ver detalles de obras
 
 🗃️ Almacenamiento local (por ejemplo con AsyncStorage o SQLite)
+
+
+------------------------
+php artisan notifications:table
+php artisan migrate
+la tabla notifications donde se guardan notificaciones de canal database.
+
+En pocas palabras el fcm:
+Es el “puente” que usa tu backend (Laravel) para decirle al celular:
+
+“Che, llegó un nuevo evento. Mostrá una notificación al usuario.”
