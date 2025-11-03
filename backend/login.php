@@ -1,4 +1,5 @@
 <?php
+
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
@@ -16,8 +17,6 @@ $password = $data['password'] ?? null;
 $conexion = mysqli_connect($server_db, $usuario_db, $password_db, $base_db)
     or die("No se puede conectar con el servidor");
     
-// mysqli_select_db($conexion, $base_db)
-//     or die("No se puede seleccionar la base de datos");
 
 if ($usuario && $password) {
 
@@ -44,7 +43,8 @@ if ($usuario && $password) {
             'token' => $token,
             'nombre' => $row->nombre,
             'apellido' => $row->apellido,
-            'id' => $row->id
+            'id' => $row->id,
+            'rol_id' => $row->rol_id
         ]);
     } else {
         echo json_encode([
