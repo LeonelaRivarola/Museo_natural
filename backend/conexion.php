@@ -2,7 +2,7 @@
 $server_db = "localhost";
 $usuario_db = "root";
 $password_db = "";
-$base_db = "museo_natural";
+$base_db = "museo_naturales";
 
 $conexion = mysqli_connect($server_db, $usuario_db, $password_db, $base_db);
 
