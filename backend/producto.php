@@ -10,7 +10,7 @@ require("conexion.php");
 // Fuerza UTF-8 en la conexión
 mysqli_set_charset($conexion, "utf8mb4");
 
-$baseUrl = "http://172.17.91.152/ProyectoFinal/backend/uploads/"; 
+$baseUrl = "http://".$_SERVER['SERVER_ADDR']."/ProyectoFinal/backend/uploads/";
 
 if (!isset($_GET['id'])) {
   echo json_encode(["error" => "Falta el parámetro id"]);

@@ -15,7 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $nombre = $_POST["nombre"] ?? "";
 $precio = $_POST["precio"] ?? "";
 $descripcion = $_POST["descripcion"] ?? "";
+$imagen_id = $_POST["imagen_id"] ?? null;
 
+//Validacion
 if (!$nombre || !$precio) {
   echo json_encode(["status" => 400, "message" => "Faltan datos obligatorios"]);
   exit;
@@ -25,36 +27,10 @@ $nombre = mysqli_real_escape_string($conexion, $nombre);
 $precio = floatval($precio);
 $descripcion = mysqli_real_escape_string($conexion, $descripcion);
 
-// -----------------------------
-// 📌 PROCESAR IMAGEN SUBIDA
-// -----------------------------
-$imagenNombre = "";
+//proceso de carga
 
-if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === 0) {
-
-  $extension = pathinfo($_FILES["imagen"]["name"], PATHINFO_EXTENSION);
-
-  // Validar imagen
-  $extPermitidas = ["jpg", "jpeg", "png", "gif", "webp"];
-  if (!in_array(strtolower($extension), $extPermitidas)) {
-    echo json_encode(["status" => 400, "message" => "Formato de imagen no permitido"]);
-    exit;
-  }
-
-  $imagenNombre = uniqid("img_") . "." . $extension;
-  $rutaDestino = "uploads/" . $imagenNombre;
-
-  if (!move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
-    echo json_encode(["status" => 500, "message" => "Error al guardar la imagen"]);
-    exit;
-  }
-}
-
-// -----------------------------
-// 📌 INSERTAR PRODUCTO
-// -----------------------------
-$sql = "INSERT INTO producto (nombre, descripcion, precio, imagen)
-        VALUES ('$nombre', '$descripcion', $precio, '$imagenNombre')";
+$sql = "INSERT INTO producto (nombre, descripcion, precio, imagen_id)
+        VALUES ('$nombre', '$descripcion', $precio, " . ($imagen_id ? "'$imagen_id'" : "NULL") . ")";
 
 if (mysqli_query($conexion, $sql)) {
   echo json_encode([
