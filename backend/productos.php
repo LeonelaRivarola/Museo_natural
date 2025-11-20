@@ -7,7 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require("conexion.php");
 
-$baseUrl = "http://172.17.91.152/ProyectoFinal/backend/uploads/";
+$baseUrl = "http://192.168.0.104/ProyectoFinal/backend/uploads/";
 
 // Consulta todos los productos
 $sql = "SELECT id_producto, nombre, precio, imagen FROM producto";
