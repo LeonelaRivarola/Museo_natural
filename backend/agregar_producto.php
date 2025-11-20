@@ -1,44 +1,60 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
+header("Access-Control-Allow-Headers: *");
+header("Content-Type: application/json; charset=UTF-8");
 
-require("conexion.php");
+require_once "conexion.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  http_response_code(200);
-  exit;
+// Validar que sea POST
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    echo json_encode(["status" => 400, "message" => "Método no permitido"]);
+    exit;
 }
 
-// 📌 Validar campos enviados por FormData
-$nombre = $_POST["nombre"] ?? "";
-$precio = $_POST["precio"] ?? "";
-$descripcion = $_POST["descripcion"] ?? "";
-$imagen_id = $_POST["imagen_id"] ?? null;
+// Obtención segura de campos
+$nombre       = isset($_POST["nombre"]) ? trim($_POST["nombre"]) : null;
+$precio       = isset($_POST["precio"]) ? trim($_POST["precio"]) : null;
+$descripcion  = isset($_POST["descripcion"]) ? trim($_POST["descripcion"]) : null;
+$imagen       = isset($_POST["imagen"]) ? trim($_POST["imagen"]) : null; // nombre ya subido
+$id_categoria = isset($_POST["id_categoria"]) && $_POST["id_categoria"] !== "NULL" ? intval($_POST["id_categoria"]) : null;
+$stock        = isset($_POST["stock"]) ? intval($_POST["stock"]) : 0;
 
-//Validacion
+// Validaciones mínimas
 if (!$nombre || !$precio) {
-  echo json_encode(["status" => 400, "message" => "Faltan datos obligatorios"]);
-  exit;
+    echo json_encode(["status" => 400, "message" => "Faltan datos obligatorios (nombre, precio)."]);
+    exit;
 }
 
-$nombre = mysqli_real_escape_string($conexion, $nombre);
-$precio = floatval($precio);
-$descripcion = mysqli_real_escape_string($conexion, $descripcion);
+// Preparar query
+$sql = "INSERT INTO producto (nombre, imagen, descripcion, precio, id_categoria, stock)
+        VALUES (?, ?, ?, ?, ?, ?)";
 
-//proceso de carga
+$stmt = mysqli_prepare($conexion, $sql);
 
-$sql = "INSERT INTO producto (nombre, descripcion, precio, imagen_id)
-        VALUES ('$nombre', '$descripcion', $precio, " . ($imagen_id ? "'$imagen_id'" : "NULL") . ")";
+if (!$stmt) {
+    echo json_encode(["status" => 500, "message" => "Error al preparar consulta: " . mysqli_error($conexion)]);
+    exit;
+}
 
-if (mysqli_query($conexion, $sql)) {
-  echo json_encode([
-    "status" => 200,
-    "message" => "Producto agregado correctamente",
-    "id" => mysqli_insert_id($conexion)
-  ]);
+// Bind: s = string, d = double, i = int
+mysqli_stmt_bind_param(
+    $stmt,
+    "sssddi",
+    $nombre,
+    $imagen,
+    $descripcion,
+    $precio,
+    $id_categoria,
+    $stock
+);
+
+// Ejecutar
+if (mysqli_stmt_execute($stmt)) {
+    echo json_encode(["status" => 200, "message" => "Producto agregado correctamente"]);
 } else {
-  echo json_encode(["status" => 500, "message" => "Error al agregar el producto"]);
+    echo json_encode(["status" => 500, "message" => "Error al insertar: " . mysqli_stmt_error($stmt)]);
 }
+
+mysqli_stmt_close($stmt);
+mysqli_close($conexion);
 ?>
